@@ -20,7 +20,6 @@ class Post(models.Model):
     status = models.IntegerField(choices=STATUS, default=0)
     likes = models.ManyToManyField(User, related_name='blog_likes', blank=True)
 
-
     class Meta:
         ordering = ['-created_on']  # order post by create_on, from above, '-' means use descending order
 
@@ -28,12 +27,21 @@ class Post(models.Model):
     def __str__(self):
         return self.title
 
-# helper function
+# helper method to return total number of likes on post
     def number_of_likes(self):
-        return self.likes.count()      # return total number of likes on post
-
-
+        return self.likes.count()   
 
 
 class Comment(models.Model):
-    
+    post = models.ForeignKey(Post, on_delete=models.CASCADE, related_name='comments')
+    name = models.CharField(max_length=80)
+    email = models.EmailField()
+    body = models.TextField()
+    created_on = models.DateTimeField(auto_now_add=True) 
+    approved = models.BooleanField(default=False)   
+
+    class Meta:
+        ordering = ['created_on']  # ascending order, so oldest comments are listed first
+
+    def __str__(self):
+        return f"Comment {self.body} by {self.name}"
