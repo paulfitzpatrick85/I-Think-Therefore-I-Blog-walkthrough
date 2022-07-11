@@ -8,11 +8,58 @@
         <!-- Blog Entries Column -->
         <div class="col-12 mt-3 left">
             <div class="row">
-
+                {% for post in post_list %}         <!--interate through posts-->
+                    <div class="col-md-4">
+                        <div class="col-card-md-4">
+                            <div class="card-body">
+                                <div class="image-container">
+            <!-- if 'placeholder' found in url, its assumed there is no image so one default image will be loaded-->
+                                    {% if "placeholder" in post.featured_image.url %}  
+                                    <img class="card-img-top"
+                                        src="https://codeinstitute.s3.amazonaws.com/fullstack/blog/default.jpg">
+            <!-- if 'placeholder not found, imaged uploaded will be shown'-->
+                                    {% else %}
+                                    <img class="card-img-top" src=" {{ post.featured_image.url }}">  <!--double curlys(without percent signs) insert into html-->
+                                    {% endif %}
+                                    <div class="image-flash">
+                                        <p class="author">Author: {{ post.author }}</p>
+                                    </div>
+                                </div>
+                                <a href="#" class="post-link">
+                                    <h2 class="card-title">{{ post.title }}</h2>
+                                    <p class="card-text">{{ post.excerpt }}</p>
+                                    <hr>
+                                    <p class="card-text text-muted h6">{{ post.created_on}} <i class="far fa-heart"></i>
+                                        {{ post.number_of_likes }}</p>
+                                </a>
+                            </div>
+                        </div> 
+                    </div>
+                     
+                    {% if forloop.counter|divisibleby:3 %}         <!--display posts in rows of 3-->
+                    </div>>                            <!--close div after 3 posts-->
+                    <div class="row">       <!--open new div-->
+                    {% endif %}
+                {% endfor %}
             </div>
         </div>
     </div>
+    <!-- after 6 posts on blog, have them to appear on extra page
+     this is boilerplate django which can be used in project-->
 
+    {% if is_paginated %}         <!-- 'is_paginated' is boolean which will set nav at bottom of page-->
+    <nav aria-label="Page navigation">
+        <ul class="pagination justify-content-center">
+            {% if page_obj.has_previous %}
+            <li><a href="?page={{ page_obj.previous_page_number }}" class="page-link">&laquo; PREV </a></li>
+            {% endif %}
+            {% if page_obj.has_next %}
+            <li><a href="?page={{ page_obj.next_page_number }}" class="page-link"> NEXT &raquo;</a></li>
+
+            {% endif %}
+        </ul>
+    </nav>
+    {% endif %}
 </div>
 
 {%endblock%}
