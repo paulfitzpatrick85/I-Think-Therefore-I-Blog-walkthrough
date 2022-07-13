@@ -19,7 +19,7 @@ class CommentAdmin(admin.ModelAdmin):
     list_display = ('name', 'body', 'post', 'created_on', 'approved')
     list_filter = ('approved', 'created_on')
     search_fields = ('name', 'email', 'body')
-    action = ['approve_comments']      # approve comment box in admin, actions can take list of functions
+    actions = ['approve_comments']     # approve comment box in admin, actions can take list of functions
 
     def approve_comments(self, request, queryset):
         queryset.update(approved=True)    # approve is boolean which is false by default, this updates quearyset to true
