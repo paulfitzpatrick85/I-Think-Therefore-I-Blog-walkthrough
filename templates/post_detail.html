@@ -79,6 +79,12 @@
         <div class="col-md-4 card mb-4  mt-3 ">
             <div class="card-body">
                 <!-- For later -->
+                {% if commented %}  <!--if boolean ture(from view py) instead of comment form, the message below is displayed-->
+                <div class="alert alert-success" role="alert">   
+                 Your comment is awaiting approval
+                </div>
+                {% else %}                              <!--otherwise display form-->
+
                 {% if user.is_authenticated %}      <!--comment box only to appears is user authenticated-->
 
                 <h3>Leave a comment:</h3>
@@ -88,6 +94,7 @@
                     {% csrf_token %}                <!--protection to add to any/all forms-->
                     <button type="submit" class="btn btn-signup btn-lg">Submit</button>
                 </form>
+                {% endif %}
                 {% endif %}
 
 

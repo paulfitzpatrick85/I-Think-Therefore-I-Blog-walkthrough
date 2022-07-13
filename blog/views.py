@@ -16,7 +16,7 @@ class PostDetail(View):
     def get(self, request, slug, *args, **kwargs):    
         queryset = Post.objects.filter(status=1)   # status = 1 filters only active posts
         post = get_object_or_404(queryset, slug=slug)  # getting post by slug as slug is unique for each post
-        comments = post.comments.filter(approved=True).order_by("-created_on") # filter by only approved  and oldest firt comments
+        comments = post.comments.filter(approved=True).order_by("-created_on")  # filter by only approved  and oldest firt comments
         liked = False     # defaulted to false
         if post.likes.filter(id=self.request.user.id).exists():   # only registered/signed in user can like post
             liked = True
@@ -27,7 +27,41 @@ class PostDetail(View):
             {
                 "post": post,          # render dictionary
                 "comments": comments,
+                "commented": False,
                 "liked": liked,
                 "comment_form": CommentForm()
+            },
+        )
+
+    def post(self, request, slug, *args, **kwargs):    
+        queryset = Post.objects.filter(status=1)   # status = 1 filters only active posts
+        post = get_object_or_404(queryset, slug=slug)  # getting post by slug as slug is unique for each post
+        comments = post.comments.filter(approved=True).order_by("-created_on") # filter by only approved  and oldest firt comments
+        liked = False     #  defaulted to false
+        if post.likes.filter(id=self.request.user.id).exists():   # only registered/signed in user can like post
+            liked = True
+
+        # get data posted from form and put in variable
+        comment_form = CommentForm(data=request.POST)
+        # if form in filled in correctly, auto fill these fields from logged in user info
+        if comment_form.is_valid():
+            comment_form.instance.email = request.user.email
+            comment_form.instance.name = request.user.username
+            comment = comment_form.save(commit=False)    # not commited to database yet (not until a post is assigned to it)
+            comment.post = post
+            comment.save()
+        else:
+            comment_form = CommentForm()  # return empty comment form instance
+ 
+        return render(
+            request,            
+            "post_detail.html",       # render to this page
+            {
+                "post": post,          # render dictionary
+                "comments": comments,
+                "commented": True,
+                "comment_form": comment_form,
+                "liked": liked,
+                
             },
         )
