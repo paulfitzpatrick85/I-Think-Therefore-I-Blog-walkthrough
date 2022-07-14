@@ -1,5 +1,6 @@
-from django.shortcuts import render, get_object_or_404
-from django.views import generic, View
+from django.shortcuts import render, get_object_or_404, reverse  # rev - look up url by url name in urls .py
+from django.views import generic, View 
+from django.http import HttpResponseRedirect
 from .models import Post
 from .forms import CommentForm
 
@@ -65,3 +66,17 @@ class PostDetail(View):
                 
             },
         )
+
+    
+    class PostLike(View):
+        def post(self, request, slug):
+            post = get_object_or_404(queryset, slug=slug)  # getting post by slug as slug is unique for each post
+            # toggle 'like' status by checking if already liked or not
+            if post.likes.filter(id=request.user.id).exists():  # if user id exists than post has been liked
+                post.likes.remove(request.user)                 # so it can be removed
+            else:
+                post.likes.add(request.user)                    # add the like
+
+            # reload post_detail template to see results, import HttpResponseRedirect  and reverse at top of page
+            return HttpResponseRedirect(reverse('post_detail', args=[slug]))  # page reloads on like/unlike
+
