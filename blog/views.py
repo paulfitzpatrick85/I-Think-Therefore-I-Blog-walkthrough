@@ -68,15 +68,16 @@ class PostDetail(View):
         )
 
     
-    class PostLike(View):
-        def post(self, request, slug):
-            post = get_object_or_404(queryset, slug=slug)  # getting post by slug as slug is unique for each post
-            # toggle 'like' status by checking if already liked or not
-            if post.likes.filter(id=request.user.id).exists():  # if user id exists than post has been liked
-                post.likes.remove(request.user)                 # so it can be removed
-            else:
-                post.likes.add(request.user)                    # add the like
+class PostLike(View):
 
-            # reload post_detail template to see results, import HttpResponseRedirect  and reverse at top of page
-            return HttpResponseRedirect(reverse('post_detail', args=[slug]))  # page reloads on like/unlike
+    def post(self, request, slug,  *args, **kwargs):
+        post = get_object_or_404(Post, slug=slug)  # getting post by slug as slug is unique for each post
+      # toggle 'like' status by checking if already liked or not
+        if post.likes.filter(id=request.user.id).exists():  # if user id exists than post has been liked
+            post.likes.remove(request.user)                 # so it can be removed
+        else:
+            post.likes.add(request.user)                    # add the like
+
+        # reload post_detail template to see results, import HttpResponseRedirect  and reverse at top of page
+        return HttpResponseRedirect(reverse('post_detail', args=[slug]))  # page reloads on like/unlike
 
