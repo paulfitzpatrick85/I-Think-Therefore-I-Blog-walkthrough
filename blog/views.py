@@ -67,6 +67,16 @@ class PostDetail(View):
             },
         )
 
+    def delete_comment(self, request, post_id):
+        comment = get_object_or_404(Comment, post=post_id) 
+        if request.user.id == comment.user_id: 
+            Comment.objects.get(pk=post_id).delete()
+
+            #comment.delete()
+            message.success(request, 'Your comment has been deleted.')
+
+        return redirect(reverse('post_detail', args=(post_id,)))
+
     
 class PostLike(View):
 

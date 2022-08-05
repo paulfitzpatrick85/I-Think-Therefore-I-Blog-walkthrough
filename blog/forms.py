@@ -1,9 +1,12 @@
-from .models import Comment
-from django import forms
+from .models import Comment, Post
+from django  import forms
 
-
-# tell comment form what model to use and which field to display
 class CommentForm(forms.ModelForm):
-    class Meta:
-        model = Comment
-        fields = ('body',)  # , makes python read as tuple and not string
+    class Meta:         
+        model = Comment         
+        fields = ('body',)
+
+class PostForm(forms.ModelForm):
+    class Meta:         
+        model = Post         
+        fields = ['title', 'location', 'rating', 'description', 'featured_image']
